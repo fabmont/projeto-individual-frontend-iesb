@@ -3,28 +3,46 @@ import {
   Box,
   Button,
   Flex,
+  Menu,
+  MenuButton,
+  MenuItem,
+  MenuList,
   SimpleGrid,
+  Skeleton,
   Stack,
   Stat,
   StatLabel,
   StatNumber,
   Table,
   TableContainer,
+  Tag,
+  Tbody,
+  Td,
   Text,
   Th,
   Thead,
   Tr,
 } from '@chakra-ui/react';
-import { FiEye, FiEyeOff } from 'react-icons/fi';
+import { FiEdit, FiEye, FiEyeOff, FiMoreVertical, FiTrash } from 'react-icons/fi';
 import { BiTrendingDown, BiTrendingUp } from 'react-icons/bi';
 import { Emoji } from 'react-apple-emojis';
 import { Link } from 'react-router-dom';
+
+import moment from 'moment';
 import Page from '../../components/Page';
 import numberToCurrency from '../../services/numberToCurrency';
+import useTransactions from '../../services/transactions';
+import CreateTransactionModal from '../../components/CreateTransactionModal';
+import useCategories from '../../services/categories';
 
 export default function Dashboard({ totalBalances, accounts }) {
   const [showTotalAmount, setShowTotalAmount] = useState(true);
   const [selectedAccount, setSelectedAccount] = useState(accounts && accounts[0] && accounts[0].id);
+  const { transactions, isLoading, createTransaction, editTransaction } =
+    useTransactions(selectedAccount);
+  const { categories } = useCategories();
+  const [transactionType, setTransactionType] = useState(null);
+  const [editingData, setEditingData] = useState(false);
 
   return (
     <Page title="Home">
@@ -122,28 +140,111 @@ export default function Dashboard({ totalBalances, accounts }) {
           </SimpleGrid>
 
           <Stack spacing="4" direction="row" justify="flex-end" mt="6">
-            <Button colorScheme="green" leftIcon={<BiTrendingUp />}>
-              Receita
+            <Button
+              colorScheme="green"
+              leftIcon={<BiTrendingUp />}
+              onClick={() => setTransactionType('earning')}
+            >
+              Ganho
             </Button>
-            <Button colorScheme="red" leftIcon={<BiTrendingDown />}>
+            <Button
+              colorScheme="red"
+              leftIcon={<BiTrendingDown />}
+              onClick={() => setTransactionType('expense')}
+            >
               Despesa
             </Button>
           </Stack>
 
-          <TableContainer border="1px" borderColor="whiteAlpha.200" borderRadius="md" mt="4">
-            <Table variant="simple" colorScheme="gray">
-              <Thead>
-                <Tr>
-                  <Th>Data</Th>
-                  <Th>Descrição</Th>
-                  <Th>Valor</Th>
-                  <Th>Categoria</Th>
-                  <Th>Tipo</Th>
-                </Tr>
-              </Thead>
-            </Table>
-          </TableContainer>
+          {isLoading ? (
+            <Stack mt="4">
+              {[0, 1, 2, 3].map((i) => (
+                <Skeleton
+                  key={i}
+                  w="full"
+                  h="25px"
+                  startColor="whiteAlpha.200"
+                  endColor="whiteAlpha.300"
+                />
+              ))}
+            </Stack>
+          ) : (
+            <TableContainer border="1px" borderColor="whiteAlpha.200" borderRadius="md" mt="4">
+              <Table variant="simple">
+                <Thead>
+                  <Tr>
+                    <Th borderColor="whiteAlpha.200">Data</Th>
+                    <Th borderColor="whiteAlpha.200">Descrição</Th>
+                    <Th borderColor="whiteAlpha.200">Valor</Th>
+                    <Th borderColor="whiteAlpha.200">Categoria</Th>
+                    <Th borderColor="whiteAlpha.200">Tipo</Th>
+                    <Th borderColor="whiteAlpha.200" />
+                  </Tr>
+                </Thead>
+                <Tbody>
+                  {(transactions || []).map((transaction) => (
+                    <Tr key={transaction.id}>
+                      <Td borderColor="whiteAlpha.200">
+                        {moment(transaction.created_at).format('DD/MM/YYYY')}
+                      </Td>
+                      <Td borderColor="whiteAlpha.200">{transaction.description}</Td>
+                      <Td borderColor="whiteAlpha.200">{numberToCurrency(transaction.value)}</Td>
+                      <Td borderColor="whiteAlpha.200">{transaction.category}</Td>
+                      <Td borderColor="whiteAlpha.200">
+                        <Tag colorScheme={transaction.type === 'expense' ? 'red' : 'green'}>
+                          {transaction.type === 'expense' ? 'Despesa' : 'Receita'}
+                        </Tag>
+                      </Td>
+                      <Td borderColor="whiteAlpha.200">
+                        <Menu>
+                          <MenuButton as={Button} variant="ghost" size="sm">
+                            <FiMoreVertical />
+                          </MenuButton>
+                          <MenuList>
+                            <MenuItem
+                              icon={<FiEdit />}
+                              onClick={() => {
+                                setEditingData(transaction);
+                                setTransactionType(transaction.type);
+                              }}
+                            >
+                              Editar
+                            </MenuItem>
+                            <MenuItem icon={<FiTrash />}>Excluir</MenuItem>
+                          </MenuList>
+                        </Menu>
+                      </Td>
+                    </Tr>
+                  ))}
+                  {transactions && !transactions.length && (
+                    <Tr>
+                      <Td colSpan={6} textAlign="center" borderColor="whiteAlpha.200">
+                        Nenhuma transação foi realizada.
+                      </Td>
+                    </Tr>
+                  )}
+                  <Tr />
+                </Tbody>
+              </Table>
+            </TableContainer>
+          )}
         </>
+      )}
+
+      {transactionType && (
+        <CreateTransactionModal
+          isOpen={!!transactionType}
+          transactionType={transactionType}
+          editingData={editingData}
+          targetAccount={selectedAccount}
+          categoriesList={categories}
+          createTransaction={createTransaction}
+          editTransaction={editTransaction}
+          onClose={() => {
+            setTransactionType(null);
+            setEditingData(null);
+          }}
+        />
       )}
     </Page>
   );
