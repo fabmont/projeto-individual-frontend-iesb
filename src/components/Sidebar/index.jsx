@@ -28,6 +28,7 @@ export default function Sidebar({ onClose }) {
               variant="ghost"
               justifyContent="start"
               colorScheme={handleActiveMenu('/') ? 'primary' : 'white'}
+              bg={handleActiveMenu('/') ? 'blackAlpha.500' : null}
             >
               <Icon as={BiHome} mr="4" />
               Home
@@ -39,6 +40,7 @@ export default function Sidebar({ onClose }) {
               variant="ghost"
               justifyContent="start"
               colorScheme={handleActiveMenu('/accounts') ? 'primary' : 'white'}
+              bg={handleActiveMenu('/accounts') ? 'blackAlpha.500' : null}
             >
               <Icon as={RiBankCardLine} mr="4" />
               Minhas contas
@@ -50,6 +52,7 @@ export default function Sidebar({ onClose }) {
               variant="ghost"
               justifyContent="start"
               colorScheme={handleActiveMenu('/expenses') ? 'primary' : 'white'}
+              bg={handleActiveMenu('/expenses') ? 'blackAlpha.500' : null}
             >
               <Icon as={FiTrendingDown} mr="4" />
               Despesas
@@ -61,6 +64,7 @@ export default function Sidebar({ onClose }) {
               variant="ghost"
               justifyContent="start"
               colorScheme={handleActiveMenu('/categories') ? 'primary' : 'white'}
+              bg={handleActiveMenu('/categories') ? 'blackAlpha.500' : null}
             >
               <Icon as={BiCategory} mr="4" />
               Categorias
@@ -72,6 +76,7 @@ export default function Sidebar({ onClose }) {
               variant="ghost"
               justifyContent="start"
               colorScheme={handleActiveMenu('/goals') ? 'primary' : 'white'}
+              bg={handleActiveMenu('/goals') ? 'blackAlpha.500' : null}
             >
               <Icon as={MdOutlineShowChart} mr="4" />
               Metas

@@ -29,6 +29,7 @@ import { Emoji } from 'react-apple-emojis';
 import { Link } from 'react-router-dom';
 
 import moment from 'moment';
+import { toast } from 'react-toastify';
 import Page from '../../components/Page';
 import numberToCurrency from '../../services/numberToCurrency';
 import useTransactions from '../../services/transactions';
@@ -38,7 +39,7 @@ import useCategories from '../../services/categories';
 export default function Dashboard({ totalBalances, accounts }) {
   const [showTotalAmount, setShowTotalAmount] = useState(true);
   const [selectedAccount, setSelectedAccount] = useState(accounts && accounts[0] && accounts[0].id);
-  const { transactions, isLoading, createTransaction, editTransaction } =
+  const { transactions, isLoading, createTransaction, editTransaction, deleteTransaction } =
     useTransactions(selectedAccount);
   const { categories } = useCategories();
   const [transactionType, setTransactionType] = useState(null);
@@ -210,7 +211,18 @@ export default function Dashboard({ totalBalances, accounts }) {
                             >
                               Editar
                             </MenuItem>
-                            <MenuItem icon={<FiTrash />}>Excluir</MenuItem>
+                            <MenuItem
+                              icon={<FiTrash />}
+                              onClick={() => {
+                                deleteTransaction(
+                                  transaction,
+                                  () => toast.success('Transação deletada com sucesso.'),
+                                  () => toast.error('Ocorreu um erro ao excluir a transação.')
+                                );
+                              }}
+                            >
+                              Excluir
+                            </MenuItem>
                           </MenuList>
                         </Menu>
                       </Td>

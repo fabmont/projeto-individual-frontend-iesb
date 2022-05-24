@@ -1,6 +1,15 @@
 /* eslint-disable no-unused-expressions */
 /* eslint-disable camelcase */
-import { collection, query, where, addDoc, runTransaction, doc, setDoc } from 'firebase/firestore';
+import {
+  collection,
+  query,
+  where,
+  addDoc,
+  runTransaction,
+  doc,
+  setDoc,
+  deleteDoc,
+} from 'firebase/firestore';
 import { useCollection } from 'react-firebase-hooks/firestore';
 import { firestore } from '../firebase';
 
@@ -90,11 +99,40 @@ export default function useTransactions(accountId = '') {
     }
   };
 
+  const deleteTransaction = async (payload, successCb, errorCb) => {
+    const { account, id: transactionId, type, value } = payload;
+
+    try {
+      await runTransaction(firestore, async (tr) => {
+        const accountDoc = doc(firestore, 'accounts', account);
+        const sfDoc = await tr.get(accountDoc);
+        const transactionDoc = doc(firestore, 'transactions', transactionId);
+
+        if (!sfDoc.exists()) {
+          // eslint-disable-next-line no-throw-literal
+          throw { message: 'Document does not exist!' };
+        }
+
+        const newBalance =
+          type === 'earning' ? sfDoc.data().balance - value : sfDoc.data().balance + value;
+
+        await deleteDoc(transactionDoc);
+        // eslint-disable-next-line no-throw-literal
+        tr.update(accountDoc, { balance: newBalance });
+      });
+
+      successCb && successCb();
+    } catch (err) {
+      errorCb && errorCb(err);
+    }
+  };
+
   return {
     transactions: transactions && transactions.docs.map((e) => ({ id: e.id, ...e.data() })),
     isLoading,
     error,
     createTransaction,
     editTransaction,
+    deleteTransaction,
   };
 }
