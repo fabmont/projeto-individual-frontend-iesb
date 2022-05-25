@@ -12,11 +12,10 @@ import {
   Input,
   Stack,
   Select,
-  InputLeftAddon,
-  InputGroup,
   FormErrorMessage,
+  NumberInput,
+  NumberInputField,
 } from '@chakra-ui/react';
-import { setDoc } from 'firebase/firestore';
 import { useForm } from 'react-hook-form';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -139,10 +138,9 @@ export default function CreateTransactionModal({
               </FormControl>
               <FormControl isInvalid={errors && errors.value}>
                 <FormLabel>Valor</FormLabel>
-                <InputGroup>
-                  <InputLeftAddon>R$</InputLeftAddon>
-                  <Input type="number" {...register('value')} />
-                </InputGroup>
+                <NumberInput>
+                  <NumberInputField {...register('value')} />
+                </NumberInput>
                 {errors && errors.value && (
                   <FormErrorMessage>{errors.value.message}</FormErrorMessage>
                 )}
