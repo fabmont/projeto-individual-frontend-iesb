@@ -16,9 +16,14 @@ import useAccounts from '../../services/accounts';
 import numberToCurrency from '../../services/numberToCurrency';
 
 export default function Account() {
-  const { accounts, isLoading } = useAccounts();
+  const { accounts, isLoading, createNewAccount, deleteAccount, editAccount } = useAccounts();
   const { isOpen, onToggle } = useDisclosure();
   const [editingData, setEditingData] = useState(null);
+
+  const onToggleModal = () => {
+    onToggle();
+    setEditingData(null);
+  };
 
   if (isLoading) {
     return (
@@ -31,7 +36,9 @@ export default function Account() {
   return (
     <Page title="Contas">
       <Stack direction="row" justify="flex-end" mb="8">
-        <Button leftIcon={<MdAdd />}>Adicionar conta</Button>
+        <Button leftIcon={<MdAdd />} onClick={onToggle}>
+          Adicionar conta
+        </Button>
       </Stack>
 
       <SimpleGrid columns={[1, 3]} spacing="4">
@@ -61,7 +68,7 @@ export default function Account() {
               >
                 <MdEdit />
               </Button>
-              <Button variant="outline" onClick={() => console.log('delete account')}>
+              <Button variant="outline" onClick={() => deleteAccount(account.id)}>
                 <MdDelete />
               </Button>
             </Stack>
@@ -69,7 +76,15 @@ export default function Account() {
         ))}
       </SimpleGrid>
 
-      <CreateAccountModal isOpen={isOpen} onClose={onToggle} editingData={editingData} />
+      {isOpen && (
+        <CreateAccountModal
+          isOpen={isOpen}
+          onClose={onToggleModal}
+          editingData={editingData}
+          createAccount={createNewAccount}
+          editAccount={editAccount}
+        />
+      )}
     </Page>
   );
 }

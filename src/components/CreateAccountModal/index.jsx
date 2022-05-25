@@ -18,7 +18,6 @@ import {
 import { useForm } from 'react-hook-form';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { toast } from 'react-toastify';
 
 const defaultFormValues = {
   name: '',
@@ -26,12 +25,16 @@ const defaultFormValues = {
 };
 
 const formValidator = yup.object().shape({
-  description: yup.string().required('Campo obrigatório'),
+  name: yup.string().required('Campo obrigatório'),
   balance: yup
     .number()
     .typeError('Valor deve ser um número')
     .positive('Valor deve ser maior que zero')
     .required('Campo obrigatório'),
+});
+
+const formEditingValidator = yup.object().shape({
+  name: yup.string().required('Campo obrigatório'),
 });
 
 export default function CreateAccountModal({
@@ -50,6 +53,7 @@ export default function CreateAccountModal({
     defaultValues: {
       ...(editingData
         ? {
+            id: editingData.id,
             name: editingData.name,
             balance: editingData.balance,
           }
@@ -57,7 +61,7 @@ export default function CreateAccountModal({
             ...defaultFormValues,
           }),
     },
-    resolver: yupResolver(formValidator),
+    resolver: editingData ? yupResolver(formEditingValidator) : yupResolver(formValidator),
   });
 
   const getTitle = () => {
@@ -75,23 +79,13 @@ export default function CreateAccountModal({
 
   const onSubmit = (data) => {
     if (editingData) {
-      editAccount(
-        data,
-        () => {
-          onCloseModal();
-          toast.success('Transação criada com sucesso');
-        },
-        (e) => toast.error(e.message)
-      );
+      editAccount(data, () => {
+        onCloseModal();
+      });
     } else {
-      createAccount(
-        data,
-        () => {
-          onCloseModal();
-          toast.success('Transação criada com sucesso');
-        },
-        (e) => toast.error(e.message)
-      );
+      createAccount(data, () => {
+        onCloseModal();
+      });
     }
   };
 
