@@ -19,7 +19,6 @@ import {
 import { useForm } from 'react-hook-form';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
-import useAccountTypes from '../../services/accountTypes';
 
 const defaultFormValues = {
   name: '',
@@ -47,6 +46,7 @@ export default function CreateAccountModal({
   editingData,
   createAccount,
   editAccount,
+  accountTypes,
 }) {
   const {
     register,
@@ -68,7 +68,6 @@ export default function CreateAccountModal({
     },
     resolver: editingData ? yupResolver(formEditingValidator) : yupResolver(formValidator),
   });
-  const { accountTypes, isLoading: isAccountTypesLoading } = useAccountTypes();
 
   const getTitle = () => {
     if (editingData) return 'Editar conta';
@@ -120,13 +119,11 @@ export default function CreateAccountModal({
               <FormControl isInvalid={errors && errors.accountType}>
                 <FormLabel>Tipo da conta</FormLabel>
                 <Select {...register('accountType')}>
-                  {!isAccountTypesLoading &&
-                    accountTypes &&
-                    accountTypes.map((i) => (
-                      <option key={i.id} value={i.name}>
-                        {i.name}
-                      </option>
-                    ))}
+                  {accountTypes.map((i) => (
+                    <option key={i.id} value={i.name}>
+                      {i.name}
+                    </option>
+                  ))}
                 </Select>
                 {errors && errors.accountType && (
                   <FormErrorMessage>{errors.accountType.message}</FormErrorMessage>

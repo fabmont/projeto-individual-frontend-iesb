@@ -14,10 +14,12 @@ import { MdAdd, MdDelete, MdEdit } from 'react-icons/md';
 import CreateAccountModal from '../../components/CreateAccountModal';
 import Page from '../../components/Page';
 import useAccounts from '../../services/accounts';
+import useAccountTypes from '../../services/accountTypes';
 import numberToCurrency from '../../services/numberToCurrency';
 
 export default function Account() {
   const { accounts, isLoading, createNewAccount, deleteAccount, editAccount } = useAccounts();
+  const { accountTypes } = useAccountTypes();
   const { isOpen, onToggle } = useDisclosure();
   const [editingData, setEditingData] = useState(null);
 
@@ -97,6 +99,7 @@ export default function Account() {
           editingData={editingData}
           createAccount={createNewAccount}
           editAccount={editAccount}
+          accountTypes={accountTypes}
         />
       )}
     </Page>
