@@ -14,13 +14,15 @@ import {
 } from '@chakra-ui/react';
 import { MdAdd, MdDelete, MdEdit } from 'react-icons/md';
 import { toast } from 'react-toastify';
-import CreateCategoryModal from '../../components/CreateCategoryModal';
-import Page from '../../components/Page';
-import useCategories from '../../services/categories';
+import CreateAccountTypeModal from '../../components/CreateAccountTypeModal';
 
-export default function Categories() {
+import Page from '../../components/Page';
+import useAccountTypes from '../../services/accountTypes';
+
+export default function AccountTypes() {
   const { isOpen, onClose, onOpen } = useDisclosure();
-  const { categories, isLoading, createCategory, editCategory, deleteCategory } = useCategories();
+  const { accountTypes, isLoading, createNewAccountType, editAccountType, deleteAccountType } =
+    useAccountTypes();
   const [editingData, setEditingData] = useState();
 
   if (isLoading) {
@@ -34,7 +36,7 @@ export default function Categories() {
   }
 
   return (
-    <Page title="Categorias">
+    <Page title="Tipos de conta">
       <Stack direction="row" justify="flex-end" mb="8">
         <Button
           leftIcon={<MdAdd />}
@@ -42,24 +44,22 @@ export default function Categories() {
             onOpen();
           }}
         >
-          Adicionar categoria
+          Adicionar tipo de conta
         </Button>
       </Stack>
 
       <Box w="full" borderRadius="md" border="1px" borderColor="whiteAlpha.200">
         <Table>
           <Tbody>
-            {categories.map((category) => (
-              <Tr _last={{ td: { border: 0 } }} key={category.id}>
-                <Td borderColor="whiteAlpha.200" fontWeight="bold">
-                  {category.name}
-                </Td>
+            {accountTypes.map((accountType) => (
+              <Tr _last={{ td: { border: 0 } }} key={accountType.id}>
+                <Td borderColor="whiteAlpha.200">{accountType.name}</Td>
                 <Td textAlign="right" borderColor="whiteAlpha.200">
                   <ButtonGroup size="sm" variant="outline" isAttached>
                     <Button
                       leftIcon={<MdEdit />}
                       onClick={() => {
-                        setEditingData(category);
+                        setEditingData(accountType);
                         onOpen();
                       }}
                     >
@@ -67,8 +67,8 @@ export default function Categories() {
                     </Button>
                     <Button
                       onClick={() =>
-                        deleteCategory(
-                          category.id,
+                        deleteAccountType(
+                          accountType.id,
                           () => toast.success('Categoria excluída com sucesso'),
                           () => toast.error('Ocorreu um erro ao excluir a categoria')
                         )
@@ -80,10 +80,10 @@ export default function Categories() {
                 </Td>
               </Tr>
             ))}
-            {!categories.length && (
+            {!accountTypes.length && (
               <Tr _last={{ td: { border: 0 } }}>
                 <Td colSpan={2} textAlign="center">
-                  Nenhuma categoria foi criada ainda.
+                  Nenhum tipo de conta foi criada ainda.
                 </Td>
               </Tr>
             )}
@@ -92,15 +92,15 @@ export default function Categories() {
       </Box>
 
       {isOpen && (
-        <CreateCategoryModal
+        <CreateAccountTypeModal
           isOpen={isOpen}
           onClose={() => {
             onClose();
             setEditingData(null);
           }}
           editingData={editingData}
-          createCategory={createCategory}
-          editCategory={editCategory}
+          createAccountType={createNewAccountType}
+          editAccountType={editAccountType}
         />
       )}
     </Page>

@@ -2,6 +2,7 @@ import {
   Box,
   Button,
   Center,
+  Flex,
   SimpleGrid,
   Spinner,
   Stack,
@@ -40,6 +41,19 @@ export default function Account() {
           Adicionar conta
         </Button>
       </Stack>
+
+      {!accounts.length && (
+        <Flex
+          mt="4"
+          p="4"
+          border="1px"
+          borderColor="whiteAlpha.200"
+          borderRadius="md"
+          justify="center"
+        >
+          <Text>Nenhuma conta foi criada ainda.</Text>
+        </Flex>
+      )}
 
       <SimpleGrid columns={[1, 3]} spacing="4">
         {accounts.map((account) => (

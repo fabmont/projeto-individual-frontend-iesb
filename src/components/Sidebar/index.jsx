@@ -1,8 +1,7 @@
 import { Avatar, Box, Button, Flex, Heading, Icon, Skeleton, Stack, Text } from '@chakra-ui/react';
-import { MdOutlineShowChart } from 'react-icons/md';
 import { RiBankCardLine } from 'react-icons/ri';
 import { BiCategory, BiHome } from 'react-icons/bi';
-import { FiTrendingDown } from 'react-icons/fi';
+import { FiDollarSign } from 'react-icons/fi';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 
 import useProfile from '../../services/profile';
@@ -46,16 +45,16 @@ export default function Sidebar({ onClose }) {
               Minhas contas
             </Button>
           </Link>
-          <Link to="/expenses" onClick={onClose}>
+          <Link to="/account-types" onClick={onClose}>
             <Button
               w="full"
               variant="ghost"
               justifyContent="start"
-              colorScheme={handleActiveMenu('/expenses') ? 'primary' : 'white'}
-              bg={handleActiveMenu('/expenses') ? 'blackAlpha.500' : null}
+              colorScheme={handleActiveMenu('/account-types') ? 'primary' : 'white'}
+              bg={handleActiveMenu('/account-types') ? 'blackAlpha.500' : null}
             >
-              <Icon as={FiTrendingDown} mr="4" />
-              Despesas
+              <Icon as={FiDollarSign} mr="4" />
+              Tipos de conta
             </Button>
           </Link>
           <Link to="/categories" onClick={onClose}>
@@ -68,18 +67,6 @@ export default function Sidebar({ onClose }) {
             >
               <Icon as={BiCategory} mr="4" />
               Categorias
-            </Button>
-          </Link>
-          <Link to="/goals" onClick={onClose}>
-            <Button
-              w="full"
-              variant="ghost"
-              justifyContent="start"
-              colorScheme={handleActiveMenu('/goals') ? 'primary' : 'white'}
-              bg={handleActiveMenu('/goals') ? 'blackAlpha.500' : null}
-            >
-              <Icon as={MdOutlineShowChart} mr="4" />
-              Metas
             </Button>
           </Link>
         </Stack>
