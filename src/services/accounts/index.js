@@ -11,9 +11,9 @@ export default function useAccounts() {
   const createNewAccount = async (payload, onSuccess, onError) => {
     const accountRef = collection(firestore, 'accounts');
     try {
-      const { name, balance } = payload;
+      const { name, accountType, balance } = payload;
 
-      await addDoc(accountRef, { name, balance });
+      await addDoc(accountRef, { name, accountType, balance });
 
       toast.success('Conta criada com sucesso.');
 
@@ -25,10 +25,10 @@ export default function useAccounts() {
   };
 
   const editAccount = async (payload, onSuccess, onError) => {
-    const { id, name } = payload;
+    const { id, name, accountType } = payload;
     const accountRef = doc(firestore, 'accounts', id);
     try {
-      await setDoc(accountRef, { name }, { merge: true });
+      await setDoc(accountRef, { name, accountType }, { merge: true });
 
       toast.success('Conta criada com sucesso.');
 

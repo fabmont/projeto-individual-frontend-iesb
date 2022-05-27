@@ -14,10 +14,12 @@ import {
   FormErrorMessage,
   NumberInput,
   NumberInputField,
+  Select,
 } from '@chakra-ui/react';
 import { useForm } from 'react-hook-form';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
+import useAccountTypes from '../../services/accountTypes';
 
 const defaultFormValues = {
   name: '',
@@ -26,15 +28,17 @@ const defaultFormValues = {
 
 const formValidator = yup.object().shape({
   name: yup.string().required('Campo obrigatório'),
+  accountType: yup.string().required('Campo obrigatório'),
   balance: yup
     .number()
     .typeError('Valor deve ser um número')
-    .positive('Valor deve ser maior que zero')
+    .min(0, 'Valor deve ser maior ou igual a zero')
     .required('Campo obrigatório'),
 });
 
 const formEditingValidator = yup.object().shape({
   name: yup.string().required('Campo obrigatório'),
+  accountType: yup.string().required('Campo obrigatório'),
 });
 
 export default function CreateAccountModal({
@@ -55,6 +59,7 @@ export default function CreateAccountModal({
         ? {
             id: editingData.id,
             name: editingData.name,
+            accountType: editingData.accountType,
             balance: editingData.balance,
           }
         : {
@@ -63,6 +68,8 @@ export default function CreateAccountModal({
     },
     resolver: editingData ? yupResolver(formEditingValidator) : yupResolver(formValidator),
   });
+  const { accountTypes, isLoading: isAccountTypesLoading } = useAccountTypes();
+  console.log(accountTypes);
 
   const getTitle = () => {
     if (editingData) return 'Editar conta';
@@ -109,6 +116,21 @@ export default function CreateAccountModal({
                 <Input {...register('name')} />
                 {errors && errors.name && (
                   <FormErrorMessage>{errors.name.message}</FormErrorMessage>
+                )}
+              </FormControl>
+              <FormControl isInvalid={errors && errors.accountType}>
+                <FormLabel>Tipo da conta</FormLabel>
+                <Select {...register('accountType')}>
+                  {!isAccountTypesLoading &&
+                    accountTypes &&
+                    accountTypes.map((i) => (
+                      <option key={i.id} value={i.name}>
+                        {i.name}
+                      </option>
+                    ))}
+                </Select>
+                {errors && errors.accountType && (
+                  <FormErrorMessage>{errors.accountType.message}</FormErrorMessage>
                 )}
               </FormControl>
               <FormControl isInvalid={errors && errors.balance}>
