@@ -69,7 +69,6 @@ export default function CreateAccountModal({
     resolver: editingData ? yupResolver(formEditingValidator) : yupResolver(formValidator),
   });
   const { accountTypes, isLoading: isAccountTypesLoading } = useAccountTypes();
-  console.log(accountTypes);
 
   const getTitle = () => {
     if (editingData) return 'Editar conta';
